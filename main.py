@@ -1,4 +1,6 @@
 from flask import Flask
+from flask import jsonify
+from Habit import Habit
 
 app = Flask(__name__)
 
@@ -9,9 +11,13 @@ UsersHabits = {}
 
 @app.route("/")
 def test():
-	return "Hello World!"
+	tmp = []
+	for i in range(5):
+		now = Habit("HASH" + str(i))
+		tmp.append(now.toDict())
+	return jsonify(tmp)
 
-@app.route("/register", methods=['POST'])
+@app.route("/newuser", methods=['POST'])
 def RegisterUser():
 	raise NotImplementedError
 
@@ -27,6 +33,31 @@ def AddNewHabit():
 def DeleteHabit():
 	raise NotImplementedError
 
+
+
+# Read user's file from sql 
+# @username : user's name
+# @return : List of Habit which are user's habits
+def ReadSQL(username):
+	raise NotImplementedError
+
+
+# Read user's file from sql 
+# @username : user's name
+# @newHabit : habit to be inserted
+# @return : List of Habit which are user's habits
+def InsertSQL(username, newHabit):
+	raise NotImplementedError
+
+
+# Read user's file from sql 
+# @username : user's name
+# @eraseHabit : habit to be deleted
+# @return : List of Habit which are user's habits
+def DeleteSQL(username, eraseHabit):
+	raise NotImplementedError
+
+
 if __name__ == "__main__":
-	# read user's habits frmo disk here
+	# read user's habits from disk here
 	app.run(debug=True)
