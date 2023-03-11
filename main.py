@@ -1,9 +1,9 @@
 from flask import Flask
 from flask import jsonify
 from Habit import Habit
-
+from MySQL import MySQL
 app = Flask(__name__)
-
+sql = MySQL()
 # A dictionary stores all user's habits
 # @key : user name
 # @value : A list of habit object
@@ -39,24 +39,32 @@ def DeleteHabit():
 # @username : user's name
 # @return : List of Habit which are user's habits
 def ReadSQL(username):
-	raise NotImplementedError
+    return sql.readHabit(username)
 
 
-# Read user's file from sql 
+# Insert user's file from sql 
 # @username : user's name
 # @newHabit : habit to be inserted
 # @return : List of Habit which are user's habits
 def InsertSQL(username, newHabit):
-	raise NotImplementedError
+	sql.insertHabit(username, newHabit)
+	return sql.readHabit(username)
 
-
-# Read user's file from sql 
+# Delete user's file from sql 
 # @username : user's name
 # @eraseHabit : habit to be deleted
 # @return : List of Habit which are user's habits
 def DeleteSQL(username, eraseHabit):
-	raise NotImplementedError
+	sql.insertHabit(username, eraseHabit)
+	return sql.readHabit(username)
 
+# Update user's file from sql 
+# @username : user's name
+# @updatehabit : habit to be updated
+# @return : List of Habit which are user's habits
+def UpdateSQL(username, updatehabit):
+	sql.updateHabit(username, updatehabit)
+	return sql.readHabit(username)
 
 if __name__ == "__main__":
 	# read user's habits from disk here
