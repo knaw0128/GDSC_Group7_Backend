@@ -18,20 +18,24 @@ def test():
 	return jsonify(tmp)
 
 @app.route("/newuser", methods=['POST'])
-def RegisterUser():
-	raise NotImplementedError
+def RegisterUser(username):
+	sql.createUser(username)
+	return sql.readHabit(username)
 
 @app.route("/habit", methods = ['GET'])
-def Gethabit():
-	raise NotImplementedError
+def Gethabit(username):
+	sql.readHabit(username)
+	return sql.readHabit(username)
 
 @app.route("/habit", methods = ['POST'])
-def AddNewHabit():
-	raise NotImplementedError
+def AddNewHabit(username, newhabit):
+	sql.insertHabit(username, newhabit)
+	return sql.readHabit(username)
 
 @app.route("/habit", methods = ['DELETE'])
-def DeleteHabit():
-	raise NotImplementedError
+def DeleteHabit(username, erasehabit):
+	sql.deleteHabit(username, erasehabit)
+	return sql.readHabit(username)
 
 
 
