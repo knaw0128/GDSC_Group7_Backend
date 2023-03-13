@@ -1,5 +1,4 @@
-from flask import Flask
-from flask import jsonify
+from flask import Flask, jsonify, request
 from Habit import Habit
 from MySQL import MySQL
 app = Flask(__name__)
@@ -17,59 +16,39 @@ def test():
 		tmp.append(now.toDict())
 	return jsonify(tmp)
 
+# url : "/newuser?username=USERNAME"
 @app.route("/newuser", methods=['POST'])
-def RegisterUser(username):
+def RegisterUser():
+	username = request.args.get('username', default = "", type = str)
+	print(username)
 	sql.createUser(username)
-	return sql.readHabit(username)
+	return ('', 204)
 
+# url : "/habit?username=USERNAME"
 @app.route("/habit", methods = ['GET'])
-def Gethabit(username):
-	sql.readHabit(username)
-	return sql.readHabit(username)
+def GetHabit():
+	username = request.args.get('username', default = "", type = str)
+	raw_data = sql.readHabit(username)
+	data_json = []
+	for data in raw_data:
+		now = Habit(data[0])
+		data_json.append(now.toDict())
+	return jsonify(data_json)
 
 @app.route("/habit", methods = ['POST'])
-def AddNewHabit(username, newhabit):
-	sql.insertHabit(username, newhabit)
-	return sql.readHabit(username)
+def AddNewHabit():
+	username = request.args.get('username', default = "", type = str)
+	newhabit = request.json
+	sql.insertHabit(username, Habit(newhabit['HabitName']))
+	return ('', 204)
 
 @app.route("/habit", methods = ['DELETE'])
-def DeleteHabit(username, erasehabit):
-	sql.deleteHabit(username, erasehabit)
-	return sql.readHabit(username)
-
-
-
-# Read user's file from sql 
-# @username : user's name
-# @return : List of Habit which are user's habits
-def ReadSQL(username):
-    return sql.readHabit(username)
-
-
-# Insert user's file from sql 
-# @username : user's name
-# @newHabit : habit to be inserted
-# @return : List of Habit which are user's habits
-def InsertSQL(username, newHabit):
-	sql.insertHabit(username, newHabit)
-	return sql.readHabit(username)
-
-# Delete user's file from sql 
-# @username : user's name
-# @eraseHabit : habit to be deleted
-# @return : List of Habit which are user's habits
-def DeleteSQL(username, eraseHabit):
-	sql.insertHabit(username, eraseHabit)
-	return sql.readHabit(username)
-
-# Update user's file from sql 
-# @username : user's name
-# @updatehabit : habit to be updated
-# @return : List of Habit which are user's habits
-def UpdateSQL(username, updatehabit):
-	sql.updateHabit(username, updatehabit)
-	return sql.readHabit(username)
+def DeleteHabit():
+	username = request.args.get('username', default = "", type = str)
+	habit = request.json
+	sql.deleteHabit(username, habit['HabitName'])
+	return ('', 204)
 
 if __name__ == "__main__":
 	# read user's habits from disk here
-	app.run(debug=True)
+	app.run(debug=True, host = '0.0.0.0')
